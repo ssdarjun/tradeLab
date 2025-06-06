@@ -21,6 +21,15 @@
                         <span class="menu-title">@lang('Crypto Currency') </span>
                     </a>
                 </li>
+
+                <li class="sidebar-menu-item  {{menuActive('admin.trade.manipulate*')}}">
+                    <a href="{{route('admin.trade.manipulate.index')}}" class="nav-link">
+                        <i class="menu-icon las la-cog"></i>
+                        <span class="menu-title">@lang('Trade Manipulate') </span>
+                    </a>
+                </li>
+
+
                 <li class="sidebar-menu-item  {{menuActive('admin.trade.setting*')}}">
                     <a href="{{route('admin.trade.setting.index')}}" class="nav-link">
                         <i class="menu-icon las la-cog"></i>

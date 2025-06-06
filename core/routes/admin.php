@@ -293,6 +293,13 @@ Route::middleware('admin')->group(function () {
         Route::post('save/{id?}', 'save')->name('save');
         Route::post('delete/{id}', 'delete')->name('delete');
     });
+
+    Route::prefix('trade/manipulate')->name('trade.manipulate.')->controller("TradeManipulateController")->group(function () {
+        Route::get('index', 'index')->name('index');
+        Route::post('save/{id?}', 'save')->name('save');
+        Route::post('delete/{id}', 'delete')->name('delete');
+    });
+
     Route::controller("TradeLogController")->name("trade.log.")->prefix("trade/log")->group(function () {
         Route::get('index', 'index')->name('index');
         Route::get('wining', 'win')->name('wining');

@@ -12,7 +12,7 @@ class CryptoCurrencyController extends Controller
     public function index()
     {
         $pageTitle = "Crypto Currency List";
-        $cryptos   = CryptoCurrency::orderByRaw('rank = 0, rank ASC')->searchAble(['name', 'symbol'])->paginate(getPaginate());
+        $cryptos   = CryptoCurrency::orderBy('rank', 'ASC')->searchAble(['name', 'symbol'])->paginate(getPaginate());
         return view('admin.crypto.index', compact('cryptos', 'pageTitle'));
     }
 

