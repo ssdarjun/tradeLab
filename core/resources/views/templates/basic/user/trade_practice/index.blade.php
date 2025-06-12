@@ -20,27 +20,27 @@
         <div class="col-12">
             <div class="card custom--card border-0">
                 <div class="card-body">
-                     <div class="col-12">
-            <div class="card custom--card border-0">
-                <div class="card-body">
-                    <form action="">
-                        <div class="d-flex flex-wrap gap-4">
-                            <div class="flex-grow-1">
-                                <label>@lang('Name')</label>
-                                <input type="text" name="search" value="{{ request()->search }}"
-                                    class="form-control cmn--form--control">
-                            </div>
-                            <div class="flex-lg-grow-1 "></div>
-                            <div class="flex-grow-1 align-self-end">
-                                <button class="cmn--btn btn-block h-100"><i class="las la-filter"></i>
-                                    @lang('Filter')
-                                </button>
+                    <div class="col-12">
+                        <div class="card custom--card border-0">
+                            <div class="card-body">
+                                <form action="">
+                                    <div class="d-flex flex-wrap gap-4">
+                                        <div class="flex-grow-1">
+                                            <label>@lang('Name')</label>
+                                            <input type="text" name="search" value="{{ request()->search }}"
+                                                class="form-control cmn--form--control">
+                                        </div>
+                                        <div class="flex-lg-grow-1 "></div>
+                                        <div class="flex-grow-1 align-self-end">
+                                            <button class="cmn--btn btn-block h-100"><i class="las la-filter"></i>
+                                                @lang('Filter')
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+                    </div>
                 </div>
             </div>
         </div>
