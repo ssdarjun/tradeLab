@@ -14,7 +14,7 @@ class TradeController extends Controller
     public function index()
     {
         $pageTitle = "Trade Now";
-        $cryptos   = CryptoCurrency::active()->orderBy('rank', 'ASC')->get();
+        $cryptos   = CryptoCurrency::active()->orderBy('rank', 'ASC')->searchable(['name'])->get();
         return view($this->activeTemplate . 'user.trade.index', compact('pageTitle', 'cryptos'));
     }
     public function tradeNow($name)

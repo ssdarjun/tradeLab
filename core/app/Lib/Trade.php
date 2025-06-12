@@ -75,7 +75,7 @@ class Trade
         if (!$this->isPracticeTrade) {
             $highLow = $request->high_low_type == Status::TRADE_HIGH ? 'High' : "Low";
             $details = 'Trade to ' . $crypto->name . ' ' . $highLow;
-            $this->createTransaction($tradeLog->amount,$details,'-');
+            $this->createTransaction($tradeLog, $details,'-');
         }
         return response()->json([
             'success'     => true,
@@ -139,12 +139,21 @@ class Trade
         $user      = auth()->user();
         $gnl       = gs();
 
-        $user->$columName += $tradeLog->amount + (($tradeLog->amount / 100) * $gnl->profit);
+        $user->$columName += $tradeLog->amount + (($tradeLog->amount / 100) * $gnl->trade_profit);
         $user->save();
+
+        $profitAmount = (($tradeLog->amount / 100) * $gnl->trade_profit);
 
         if(!$this->isPracticeTrade){
             $details = "Trade to " . $tradeLog->crypto->name . ' ' . "WIN";
-            $this->createTransaction($tradeLog->amount,$details);
+            $this->createTransaction($tradeLog, $details, "+", $profitAmount);
+
+             \Log::info('Current adjustment:', [
+                '$gnl->trade_profit' => $gnl->trade_profit,
+                'profitAmount' => $profitAmount,
+                'details' => $details,
+                '$tradeLog->amount' => $tradeLog->amount,
+            ]);
         }
 
         $tradeLog->result = Status::TRADE_WIN;
@@ -171,7 +180,7 @@ class Trade
 
         if(!$this->isPracticeTrade){
             $details = "Trade " . $tradeLog->crypto->name . ' ' . "DRAW";
-            $this->createTransaction($tradeLog->amount,$details);
+            $this->createTransaction($tradeLog, $details);
         }
 
         $tradeLog->result = Status::TRADE_DRAW;
@@ -181,9 +190,10 @@ class Trade
         return $this->successResponse("Trade Draw");
     }
 
-    public function createTransaction($amount,$details,$trxType="+")
+    public function createTransaction($tradeLog,$details,$trxType="+", $profitAmount = 0)
     {
         $user = auth()->user();
+        $amount = $tradeLog->amount;
 
         $transaction               = new Transaction();
         $transaction->user_id      = $user->id;
@@ -191,6 +201,8 @@ class Trade
         $transaction->post_balance = $user->balance;
         $transaction->trx_type     = $trxType;
         $transaction->details      = $details;
+        $transaction->profit = $profitAmount;
+        $transaction->trade_log_id = $tradeLog->id ?? 0;
         $transaction->trx          = getTrx();
         $transaction->save();
     }

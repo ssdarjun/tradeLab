@@ -14,7 +14,7 @@ class PracticeTradeController extends Controller
     public function index()
     {
         $pageTitle = "Practice Trade Now";
-        $cryptos   = CryptoCurrency::active()->orderByRaw('rank = 0, rank ASC')->paginate(getPaginate());
+        $cryptos   = CryptoCurrency::active()->orderBy('rank', 'ASC')->searchable(['name'])->paginate(getPaginate());
         return view($this->activeTemplate . 'user.trade_practice.index', compact('pageTitle', 'cryptos'));
     }
     public function tradeNow($name)

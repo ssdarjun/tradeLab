@@ -92,7 +92,48 @@ class UserController extends Controller
     {
         $pageTitle = 'Transactions';
         $remarks = Transaction::whereNotNull('remark')->distinct('remark')->orderBy('remark')->get('remark');
-        $transactions = Transaction::where('user_id', auth()->id())->searchable(['trx'])->filter(['trx_type', 'remark'])->orderBy('id', 'desc')->paginate(getPaginate());
+        $transactions = Transaction::select(
+                            'transactions.id',
+                            'transactions.user_id',
+                            'transactions.amount',
+                            'transactions.charge',
+                            'transactions.post_balance',
+                            'transactions.trx_type',
+                            'transactions.trx',
+                            'transactions.details',
+                            'transactions.remark',
+                            'transactions.created_at',
+                            'transactions.updated_at',
+                            'transactions.profit',
+                            'trade_logs.result',
+                            'crypto_currencies.name as crypto_currencies_name',
+                        )
+                        ->where('transactions.user_id', auth()->id())
+                        ->where(function ($query) {
+                            $query->where('transactions.trade_log_id', 0)
+                                ->orWhere(function ($query) {
+                                    $query->where('transactions.trx_type', '+')
+                                    ->whereIn('trade_logs.result', [
+                                                Status::TRADE_WIN,
+                                                Status::TRADE_DRAW,
+                                                0,
+                                    ]);
+                                })
+                                ->orWhere(function ($query) {
+                                    $query->where('transactions.trx_type', '-')
+                                    ->whereIn('trade_logs.result', [
+                                                Status::TRADE_LOSE,
+                                                0,
+                                    ]);
+                                });
+                        })
+                        ->leftJoin('trade_logs', 'transactions.trade_log_id', 'trade_logs.id')
+                        ->leftJoin('crypto_currencies', 'trade_logs.crypto_currency_id', 'crypto_currencies.id')
+                        ->searchable(['transactions.trx'])
+                        ->filter(['transactions.trx_type', 'transactions.remark'])
+                        ->orderBy('transactions.id', 'desc')
+                        ->groupBy('transactions.id')
+                        ->paginate(getPaginate());
 
         return view($this->activeTemplate . 'user.transactions', compact('pageTitle', 'transactions', 'remarks'));
     }

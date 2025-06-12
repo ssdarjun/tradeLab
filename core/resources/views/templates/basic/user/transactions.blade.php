@@ -50,7 +50,7 @@
                         <tr>
                             <th>@lang('Trx')</th>
                             <th>@lang('Transacted')</th>
-                            <th>@lang('Amount')</th>
+                            <th>@lang('Profit')</th>
                             <th>@lang('Post Balance')</th>
                             <th>@lang('Detail')</th>
                         </tr>
@@ -62,11 +62,11 @@
                             <td> {{ showDateTime($trx->created_at) }}<br>{{ diffForHumans($trx->created_at) }}</td>
                             <td class="budget">
                                 <span class="fw-bold @if($trx->trx_type == '+')text--success @else text--danger @endif">
-                                    {{ $trx->trx_type }} {{showAmount($trx->amount)}} {{ $general->cur_text }}
+                                    {{ $trx->trx_type }} {{showAmount($trx->profit ? $trx->profit : $trx->amount)}} {{ $general->cur_text }}
                                 </span>
                             </td>
                             <td class="budget"> {{ showAmount($trx->post_balance) }} {{ __($general->cur_text) }} </td>
-                            <td>{{ __($trx->details) }}</td>
+                            <td>{{ __($trx?->result === 2 ? ("Trade to " . $trx->crypto_currencies_name . ' ' . "LOSS") : $trx->details) }}</td>
                         </tr>
                         @empty
                         <tr>

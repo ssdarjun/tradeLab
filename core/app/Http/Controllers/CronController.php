@@ -25,7 +25,7 @@ class CronController extends Controller
 
             if ($tradeLog->high_low == Status::TRADE_HIGH) {
                 if ($tradeLog->price_was < $cryptoRate) {
-                    $tradeAmountWithProfit = $tradeLog->amount + (($tradeLog->amount / 100) * $gnl->profit);
+                    $tradeAmountWithProfit = $tradeLog->amount + (($tradeLog->amount / 100) * $gnl->trade_profit);
                     $user->balance += $tradeAmountWithProfit;
                     $user->save();
 
@@ -45,7 +45,7 @@ class CronController extends Controller
                 }
             } elseif ($tradeLog->high_low == Status::TRADE_LOW) {
                 if ($tradeLog->price_was > $cryptoRate) {
-                    $tradeAmountWithProfit  = $tradeLog->amount + (($tradeLog->amount / 100) * $gnl->profit);
+                    $tradeAmountWithProfit  = $tradeLog->amount + (($tradeLog->amount / 100) * $gnl->trade_profit);
                     $user->balance         += $tradeAmountWithProfit;
                     $user->save();
 
@@ -154,7 +154,7 @@ class CronController extends Controller
             }
             if ($tradeLog->high_low == Status::TRADE_HIGH) {
                 if ($tradeLog->price_was < $cryptoRate) {
-                    $user->demo_balance += $tradeLog->amount + (($tradeLog->amount / 100) * $gnl->profit);
+                    $user->demo_balance += $tradeLog->amount + (($tradeLog->amount / 100) * $gnl->trade_profit);
                     $user->save();
                     $tradeLog->result = Status::TRADE_WIN;
                 } else if ($tradeLog->price_was > $cryptoRate) {
@@ -167,7 +167,7 @@ class CronController extends Controller
                 }
             } elseif ($tradeLog->high_low == Status::TRADE_LOW) {
                 if ($tradeLog->price_was > $cryptoRate) {
-                    $user->demo_balance += $tradeLog->amount + (($tradeLog->amount / 100) * $gnl->profit);
+                    $user->demo_balance += $tradeLog->amount + (($tradeLog->amount / 100) * $gnl->trade_profit);
                     $user->save();
                     $tradeLog->result = Status::TRADE_WIN;
                 } else if ($tradeLog->price_was < $cryptoRate) {
