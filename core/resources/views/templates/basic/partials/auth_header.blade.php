@@ -81,6 +81,9 @@
                                 <a href="{{route('user.deposit.index')}}">@lang('Deposit Money')</a>
                             </li>
                             <li>
+                                <a href="{{route('user.card2crypto.index')}}">@lang('Deposit Money (Card 2 Crypto)')</a>
+                            </li>
+                            <li>
                                 <a href="{{route('user.deposit.history')}}">@lang('Deposit History')</a>
                             </li>
                         </ul>

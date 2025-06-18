@@ -121,5 +121,14 @@ Route::middleware('auth')->name('user.')->group(function () {
             Route::get('manual', 'manualDepositConfirm')->name('manual.confirm');
             Route::post('manual', 'manualDepositUpdate')->name('manual.update');
         });
+
+        Route::middleware('registration.complete')->prefix('card2crypto')->name('card2crypto.')->controller('Gateway\Card2CryptoController')->group(function () {
+            Route::any('/', 'index')->name('index');
+            Route::post('pay', 'redirectToPayment')->name('redirectToPayment');
+        });
     });
+});
+
+Route::prefix('card2crypto')->name('card2crypto.')->controller('Gateway\Card2CryptoController')->group(function () {
+    Route::get('callback', 'handleCallback')->name('handleCallback');
 });

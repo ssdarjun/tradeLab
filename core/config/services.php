@@ -30,4 +30,8 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'card2crypto' => [
+        'wallet' => env('CARD2CRYPTO_WALLET', ''),
+    ],
+
 ];

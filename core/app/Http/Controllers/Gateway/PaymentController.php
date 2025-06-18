@@ -114,13 +114,15 @@ class PaymentController extends Controller
             $user->balance += $deposit->amount;
             $user->save();
 
+            $gateWayCurrencyName = $deposit->card2crypto_verify_token &&  $deposit->card2crypto_wallet ? 'Card 2 Crypto' : $deposit->gatewayCurrency()->name;
+
             $transaction = new Transaction();
             $transaction->user_id = $deposit->user_id;
             $transaction->amount = $deposit->amount;
             $transaction->post_balance = $user->balance;
             $transaction->charge = $deposit->charge;
             $transaction->trx_type = '+';
-            $transaction->details = 'Deposit Via ' . $deposit->gatewayCurrency()->name;
+            $transaction->details = 'Deposit Via ' . $gateWayCurrencyName;
             $transaction->trx = $deposit->trx;
             $transaction->remark = 'deposit';
             $transaction->save();
@@ -128,13 +130,13 @@ class PaymentController extends Controller
             if (!$isManual) {
                 $adminNotification = new AdminNotification();
                 $adminNotification->user_id = $user->id;
-                $adminNotification->title = 'Deposit successful via '.$deposit->gatewayCurrency()->name;
+                $adminNotification->title = 'Deposit successful via '.$gateWayCurrencyName;
                 $adminNotification->click_url = urlPath('admin.deposit.successful');
                 $adminNotification->save();
             }
 
             notify($user, $isManual ? 'DEPOSIT_APPROVE' : 'DEPOSIT_COMPLETE', [
-                'method_name'     => $deposit->gatewayCurrency()->name,
+                'method_name'     => $gateWayCurrencyName,
                 'method_currency' => $deposit->method_currency,
                 'method_amount'   => showAmount($deposit->final_amo),
                 'amount'          => showAmount($deposit->amount),
