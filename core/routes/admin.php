@@ -104,6 +104,11 @@ Route::middleware('admin')->group(function () {
             Route::post('update/{id}', 'update')->name('update');
             Route::post('status/{id}', 'status')->name('status');
         });
+
+        Route::controller('ManualGatewayController')->prefix('card2crypto')->name('card2crypto.')->group(function () {
+            Route::get('/', 'card2crypto')->name('index');
+            Route::post('new', 'card2cryptoStore')->name('store');
+        });
     });
 
 

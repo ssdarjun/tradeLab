@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Constants\Status;
 use App\Models\Gateway;
 use App\Models\GatewayCurrency;
+use App\Models\Card2Crypto;
 use App\Http\Controllers\Controller;
 use App\Lib\FormProcessor;
 use Illuminate\Http\Request;
@@ -132,5 +133,37 @@ class ManualGatewayController extends Controller
     public function status($id)
     {
         return Gateway::changeStatus($id);
+    }
+
+    public function card2crypto() {
+        $pageTitle = 'Card 2 Crypto Gateways';
+        $gateways = Card2Crypto::first();
+        return view('admin.gateways.card2crypto', compact('pageTitle', 'gateways'));
+    }
+
+    public function card2cryptoStore(Request $request)
+    {
+        $data = $request->only(
+            'wallet_address',
+            'min_amount',
+            'max_amount',
+            'fixed_charge',
+            'percent_charge'
+        );
+
+        $data['rate'] = $request->only(
+            'USD',
+            'EUR',
+            'CAD',
+            'INR'
+        );
+
+        Card2Crypto::updateOrCreate(
+            ['wallet_address' => $request->wallet_address],
+            $data
+        );
+
+        $notify[] = ['success', 'Card 2 Crypto configuration has been saved.'];
+        return back()->withNotify($notify);
     }
 }

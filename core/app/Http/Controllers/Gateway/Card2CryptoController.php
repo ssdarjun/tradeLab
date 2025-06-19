@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\Deposit;
 use App\Http\Controllers\Gateway\PaymentController;
 use App\Constants\Status;
+use App\Models\Card2Crypto;
 
 class Card2CryptoController extends Controller
 {
@@ -23,35 +24,44 @@ class Card2CryptoController extends Controller
 
     public function conversationRate()
     {
-        $rates = [
-            'USD' => 0.0000095,
-            'EUR' => 0.000011,
-            'CAD' => 0.0000070,
-            'INR' => 0.000000110304847,
-        ];
+        $gateway = Card2Crypto::first();
+
+        if (!$gateway || !is_array($gateway->rate)) {
+            return [];
+        }
+
+        $rates = $gateway->rate;
         return $rates;
     }
 
     public function redirectToPayment(Request $request)
     {
+        $gateway = Card2Crypto::first();
 
         $request->validate([
             'email'          => 'required|email',
-            'amount'         => 'required|numeric|gt:0',
+            'amount'   => 'required|numeric|gt:0|min:' . number_format($gateway->min_amount, 2, '.', '') . '|max:' . number_format($gateway->max_amount, 2, '.', ''),
             'currency'       => 'required|in:USD,EUR,CAD,INR',
             'provider'       => 'required|in:wert,werteur,switchere,stripe,sardine,revolut,guardarian,particle,transak,banxa,simplex,changenow,mercuryo,rampnetwork,moonpay,alchemypay,robinhood,coinbase,utorg,unlimit,bitnovo,simpleswap,finchpay,topper,swipelux,kado,itez,transfi,interac,upi',
         ]);
 
         $conversationRates = $this->conversationRate();
-        $wallet = config('services.card2crypto.wallet');
+        $wallet = $gateway->wallet_address;
         $user = auth()->user();
         $card2crypto_verify_token = getTrx().getTrx();
         $trx = getTrx();
 
         $callback = route('card2crypto.handleCallback').'?trx='.$trx.'&card2crypto_verify_token=' . $card2crypto_verify_token;
 
+        /*
         $charge = 0;
         $rate = 1 / $conversationRates[$request->currency];
+        $payable = $request->amount + $charge;
+        $final_amo = $payable * $rate;
+        */
+        
+        $charge = $gateway->fixed_charge + ($request->amount * $gateway->percent_charge / 100);
+        $rate = $conversationRates[$request->currency];
         $payable = $request->amount + $charge;
         $final_amo = $payable * $rate;
 

@@ -15,9 +15,9 @@
                                 @foreach($conversationRates as $currencyName => $conversationRate)
                                 <li
                                     class="list-group-item d-flex justify-content-between  bg-transparent text-white b-input">
-                                    <span><span>1 {{ $currencyName }}</span></span>
-                                    <span><span class="min fw-bold">{{ number_format((float)$conversationRate, 15, '.', '') }}</span>
-                                        {{__($general->cur_text)}}</span>
+                                    <span><span>1 {{__($general->cur_text)}}</span></span>
+                                    <span><span class="min fw-bold">{{ number_format((float)$conversationRate, 8, '.', '') }}</span>
+                                        {{ $currencyName }}</span>
                                 </li>
                                 @endforeach
                             </ul>

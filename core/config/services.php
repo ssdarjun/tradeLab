@@ -29,9 +29,4 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-
-    'card2crypto' => [
-        'wallet' => env('CARD2CRYPTO_WALLET', ''),
-    ],
-
 ];

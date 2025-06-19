@@ -222,6 +222,12 @@
                                 </a>
                             </li>
 
+                            <li class="sidebar-menu-item {{menuActive('admin.gateway.card2crypto.*')}} ">
+                                <a href="{{route('admin.gateway.card2crypto.index')}}" class="nav-link">
+                                    <i class="menu-icon las la-dot-circle"></i>
+                                    <span class="menu-title">@lang('Card 2 Crypto')</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
