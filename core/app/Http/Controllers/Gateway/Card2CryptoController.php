@@ -17,6 +17,12 @@ class Card2CryptoController extends Controller
 
     public function index()
     {
+        $gateway = Card2Crypto::first();
+
+        if ($gateway->status != 1) {
+            return redirect()->back()->withNotify([['error', 'Crypto 2 Card Payment Gateway not active']]);
+        }
+
         $pageTitle = 'Deposit Money (Card 2 Crypto)';
         $conversationRates = $this->conversationRate();
         return view($this->activeTemplate . 'user.payment.deposit-card2crypto', compact('pageTitle', 'conversationRates'));
@@ -37,6 +43,10 @@ class Card2CryptoController extends Controller
     public function redirectToPayment(Request $request)
     {
         $gateway = Card2Crypto::first();
+
+        if ($gateway->status != 1) {
+            return redirect()->back()->withNotify([['error', 'Crypto 2 Card Payment Gateway not active']]);
+        }
 
         $request->validate([
             'email'          => 'required|email',

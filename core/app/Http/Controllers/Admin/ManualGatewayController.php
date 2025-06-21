@@ -148,7 +148,8 @@ class ManualGatewayController extends Controller
             'min_amount',
             'max_amount',
             'fixed_charge',
-            'percent_charge'
+            'percent_charge',
+            'status',
         );
 
         $data['rate'] = $request->only(
@@ -159,7 +160,7 @@ class ManualGatewayController extends Controller
         );
 
         Card2Crypto::updateOrCreate(
-            ['wallet_address' => $request->wallet_address],
+            ['id' => 1],
             $data
         );
 

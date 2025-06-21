@@ -16,6 +16,7 @@ class Card2Crypto extends Model
         'max_amount',
         'fixed_charge',
         'percent_charge',
+        'status',
     ];
 
      protected $casts = [

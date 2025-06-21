@@ -74,14 +74,20 @@
                             </li>
                         </ul>
                     </li>
+
+                    @php
+                        $cryptoGateWayEnable = \App\Models\Card2Crypto::first();
+                    @endphp
                     <li>
                         <a href="javascript:void(0)" class="{{ menuActive('user.deposit*') }}">@lang('Deposit')</a>
                         <ul class="submenu">
+                            @if($cryptoGateWayEnable->status == 1)
                             <li>
-                                <a href="{{route('user.deposit.index')}}">@lang('Deposit Money')</a>
+                                <a href="{{route('user.card2crypto.index')}}">@lang('Auto Deposit')</a>
                             </li>
+                            @endif
                             <li>
-                                <a href="{{route('user.card2crypto.index')}}">@lang('Deposit Money (Card 2 Crypto)')</a>
+                                <a href="{{route('user.deposit.index')}}">@lang('Manual Deposit')</a>
                             </li>
                             <li>
                                 <a href="{{route('user.deposit.history')}}">@lang('Deposit History')</a>

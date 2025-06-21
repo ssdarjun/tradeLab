@@ -17,6 +17,17 @@
                                            value="{{ $gateways->wallet_address ?? '' }}" required />
                                     </div>
                                 </div>
+
+                            <div class="row mb-none-15">
+                                <div class="col-12 col-md-6 mb-15">
+                                    <div class="form-group">
+                                        <label>@lang('Status')</label>
+                                           <select class="form-control " name="status"  required>
+                                                <option {{ $gateways->status == 1 ? 'selected' : '' }} value="0">Deactive</option>
+                                                <option {{ $gateways->status == 1 ? 'selected' : '' }} value="1">Active</option>
+                                           </select>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="row mb-none-15">
