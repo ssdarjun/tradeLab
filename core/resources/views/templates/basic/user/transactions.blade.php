@@ -50,7 +50,7 @@
                         <tr>
                             <th>@lang('Trx')</th>
                             <th>@lang('Transacted')</th>
-                            <th>@lang('Profit')</th>
+                            <th>@lang('Amount')</th>
                             <th>@lang('Post Balance')</th>
                             <th>@lang('Detail')</th>
                         </tr>

@@ -38,10 +38,10 @@
                                     </div>
                                     <div class="highlow-predict">
                                         <button class="cmn--btn border-0 btn--success highlowButton" type="submit" name="highlow" value="1">
-                                            <i class="las la-arrow-up"></i>@lang('High')
+                                            <i class="las la-arrow-up"></i>@lang('Buy')
                                         </button>
                                         <button class="cmn--btn border-0 btn--danger highlowButton" type="submit" name="highlow" value="2">
-                                            <i class="las la-arrow-down"></i>@lang('Low')
+                                            <i class="las la-arrow-down"></i>@lang('Sell')
                                         </button>
                                     </div>
                                     <div class="clock w-100 mt-5"></div>
