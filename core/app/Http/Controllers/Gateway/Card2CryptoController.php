@@ -23,7 +23,7 @@ class Card2CryptoController extends Controller
             return redirect()->back()->withNotify([['error', 'Crypto 2 Card Payment Gateway not active']]);
         }
 
-        $pageTitle = 'Deposit Money (Card 2 Crypto)';
+        $pageTitle = 'Auto Deposit';
         $conversationRates = $this->conversationRate();
         return view($this->activeTemplate . 'user.payment.deposit-card2crypto', compact('pageTitle', 'conversationRates'));
     }
